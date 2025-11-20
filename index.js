@@ -52,6 +52,7 @@ const run = async () => {
         _id: 1,
         title: 1,
         providerName: 1,
+        providerEmail: 1,
         price: 1,
         tags: 1,
         ratings: 1,
@@ -71,7 +72,7 @@ const run = async () => {
         providerEmail: email,
       };
       const cursor = servicesCollection.find(query);
-      const result = cursor.toArray();
+      const result = await cursor.toArray();
       res.send(result);
     });
 
@@ -89,6 +90,16 @@ const run = async () => {
         _id: new ObjectId(id),
       };
       const result = await servicesCollection.findOne(query);
+      res.send(result);
+    });
+
+    //deleting a service
+    app.delete("/services/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = {
+        _id: new ObjectId(id),
+      };
+      const result = await servicesCollection.deleteOne(query);
       res.send(result);
     });
 
