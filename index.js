@@ -30,8 +30,17 @@ const run = async () => {
     const servicesCollection = homeheroDB.collection("services");
     // getting all the services
     app.get("/services", async (req, res) => {
+      const fields = {
+        title: 1,
+        providerName: 1,
+        price: 1,
+        tags: 1,
+        ratings: 1,
+        image: 1,
+        discount: 1,
+      };
       const query = {};
-      const cursor = servicesCollection.find(query);
+      const cursor = servicesCollection.find(query).project(fields);
       const result = await cursor.toArray();
       res.send(result);
     });
