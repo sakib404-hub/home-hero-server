@@ -75,6 +75,17 @@ const run = async () => {
       res.send(result);
     });
 
+    // getting bookingInfomation by email
+    app.get("/mybookings", async (req, res) => {
+      const email = req.query.email;
+      const query = {
+        userEmail: email,
+      };
+      const cursor = bookingsCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     //posting the booking information
     app.post("/bookings", async (req, res) => {
       const newBookings = req.body;
