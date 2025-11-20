@@ -1,7 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const { MongoClient, ServerApiVersion, Collection } = require("mongodb");
+const {
+  MongoClient,
+  ServerApiVersion,
+  Collection,
+  ObjectId,
+} = require("mongodb");
 const port = process.env.PORT || 5030;
 require("dotenv").config();
 
@@ -28,9 +33,22 @@ const run = async () => {
     // creating the database and the Collection
     const homeheroDB = client.db("homeheroDB");
     const servicesCollection = homeheroDB.collection("services");
+
+    //getting the latest-services
+    app.get("/latest-service", async (req, res) => {
+      const sortBy = {
+        createdAt: -1,
+      };
+      const query = {};
+      const cursor = servicesCollection.find(query).sort(sortBy).limit(6);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     // getting all the services
     app.get("/services", async (req, res) => {
       const fields = {
+        _id: 1,
         title: 1,
         providerName: 1,
         price: 1,
@@ -44,6 +62,18 @@ const run = async () => {
       const result = await cursor.toArray();
       res.send(result);
     });
+
+    //getting the particular data
+    app.get("/services/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const query = {
+        _id: new ObjectId(id),
+      };
+      const result = await servicesCollection.findOne(query);
+      res.send(result);
+    });
+
     console.log("You successfully connected to MongoDB!");
   } catch (error) {
     console.error("MongoDB connection failed:", error);
