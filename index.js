@@ -33,6 +33,7 @@ const run = async () => {
     // creating the database and the Collection
     const homeheroDB = client.db("homeheroDB");
     const servicesCollection = homeheroDB.collection("services");
+    const bookingsCollection = homeheroDB.collection("bookings");
 
     //getting the latest-services
     app.get("/latest-service", async (req, res) => {
@@ -71,6 +72,21 @@ const run = async () => {
         _id: new ObjectId(id),
       };
       const result = await servicesCollection.findOne(query);
+      res.send(result);
+    });
+
+    //posting the booking information
+    app.post("/bookings", async (req, res) => {
+      const newBookings = req.body;
+      const result = await bookingsCollection.insertOne(newBookings);
+      res.send(result);
+    });
+
+    //getting the booking infromation
+    app.get("/bookings", async (req, res) => {
+      const query = {};
+      const cursor = bookingsCollection.find(query);
+      const result = await cursor.toArray();
       res.send(result);
     });
 
