@@ -64,6 +64,17 @@ const run = async () => {
       res.send(result);
     });
 
+    // getting my services only
+    app.get("/myservices", async (req, res) => {
+      const email = req.query.email;
+      const query = {
+        providerEmail: email,
+      };
+      const cursor = servicesCollection.find(query);
+      const result = cursor.toArray();
+      res.send(result);
+    });
+
     //posting or addding services
     app.post("/services", async (req, res) => {
       const newService = req.body;
