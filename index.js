@@ -64,10 +64,16 @@ const run = async () => {
       res.send(result);
     });
 
+    //posting or addding services
+    app.post("/services", async (req, res) => {
+      const newService = req.body;
+      const result = await servicesCollection.insertOne(newService);
+      res.send(result);
+    });
+
     //getting the particular data
     app.get("/services/:id", async (req, res) => {
       const id = req.params.id;
-      console.log(id);
       const query = {
         _id: new ObjectId(id),
       };
@@ -98,6 +104,16 @@ const run = async () => {
       const query = {};
       const cursor = bookingsCollection.find(query);
       const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    // removing from the bookings
+    app.delete("/bookings/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = {
+        _id: new ObjectId(id),
+      };
+      const result = await bookingsCollection.deleteOne(query);
       res.send(result);
     });
 
