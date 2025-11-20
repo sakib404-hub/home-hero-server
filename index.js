@@ -5,6 +5,10 @@ const { MongoClient, ServerApiVersion, Collection } = require("mongodb");
 const port = process.env.PORT || 5030;
 require("dotenv").config();
 
+// middleWare
+app.use(cors());
+app.use(express.json());
+
 //connecting the mongoDB
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@crud-operation.iftbw43.mongodb.net/?appName=CRUD-operation`;
 //creating the mongoClient
@@ -21,6 +25,16 @@ const run = async () => {
     await client.connect();
     await client.db("admin").command({ ping: 1 });
 
+    // creating the database and the Collection
+    const homeheroDB = client.db("homeheroDB");
+    const servicesCollection = homeheroDB.collection("services");
+    // getting all the services
+    app.get("/services", async (req, res) => {
+      const query = {};
+      const cursor = servicesCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
     console.log("You successfully connected to MongoDB!");
   } catch (error) {
     console.error("MongoDB connection failed:", error);
@@ -28,11 +42,6 @@ const run = async () => {
 };
 
 run().catch(console.dir);
-
-// middleWare
-app.use(cors());
-app.use(express.json());
-
 app.get("/", (req, res) => {
   res.send("The server is Running!");
 });
