@@ -34,6 +34,30 @@ const run = async () => {
     const homeheroDB = client.db("homeheroDB");
     const servicesCollection = homeheroDB.collection("services");
     const bookingsCollection = homeheroDB.collection("bookings");
+    const reviewsCollection = homeheroDB.collection("reviews");
+
+    // posting a reviw
+    app.post("/reviews", async (req, res) => {
+      const newReview = req.body;
+      const result = await reviewsCollection.insertOne(newReview);
+      res.send(result);
+    });
+    app.get("/reviews", async (req, res) => {
+      const query = {};
+      const cursor = reviewsCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.get("/reviews/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = {
+        serviceId: id,
+      };
+      const cursor = reviewsCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
     //getting the latest-services
     app.get("/latest-service", async (req, res) => {
