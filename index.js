@@ -93,6 +93,19 @@ const run = async () => {
       res.send(result);
     });
 
+    //updation of a service
+    app.put("/service/:id", async (req, res) => {
+      const updatedService = req.body;
+      const id = req.params.id;
+      const query = {
+        _id: new ObjectId(id),
+      };
+      const result = await servicesCollection.updateOne(query, {
+        $set: updatedService,
+      });
+      res.send(result);
+    });
+
     //deleting a service
     app.delete("/services/:id", async (req, res) => {
       const id = req.params.id;
