@@ -48,21 +48,33 @@ const run = async () => {
 
     // getting all the services
     app.get("/services", async (req, res) => {
-      const fields = {
-        _id: 1,
-        title: 1,
-        providerName: 1,
-        providerEmail: 1,
-        price: 1,
-        tags: 1,
-        ratings: 1,
-        image: 1,
-        discount: 1,
-      };
-      const query = {};
-      const cursor = servicesCollection.find(query).project(fields);
-      const result = await cursor.toArray();
-      res.send(result);
+      try {
+        const search = req.query.search || "";
+        const fields = {
+          _id: 1,
+          title: 1,
+          providerName: 1,
+          providerEmail: 1,
+          price: 1,
+          tags: 1,
+          ratings: 1,
+          image: 1,
+          discount: 1,
+        };
+        const query = search
+          ? {
+              $or: [
+                { title: { $regex: search, $options: "i" } },
+                { category: { $regex: search, $options: "i" } },
+              ],
+            }
+          : {};
+        const cursor = servicesCollection.find(query).project(fields);
+        const result = await cursor.toArray();
+        res.send(result);
+      } catch (error) {
+        res.status(500).send({ message: error.message });
+      }
     });
 
     // getting my services only
